@@ -3,28 +3,38 @@ import {
   ImageBackground,
   ImageSourcePropType,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from "react-native";
 import Heading from "./Heading";
 import { LinearGradient } from "expo-linear-gradient";
+import Spacing from "./Spacing";
 
 interface Props {
   image: ImageSourcePropType;
   title: string;
   color: string;
+  onPress?: () => void;
+  icon: React.ReactNode;
 }
 
-const Card: React.FC<Props> = ({ image, title, color }) => {
+const Card: React.FC<Props> = ({ image, title, color, onPress, icon }) => {
   return (
-    <View style={styles.container}>
-      <ImageBackground source={image} style={styles.image}>
-        <LinearGradient
-          colors={["transparent", color]}
-          style={styles.gradient}
-        ></LinearGradient>
-        <Heading text={title} level={3} color="white" />
-      </ImageBackground>
-    </View>
+    <TouchableOpacity onPress={onPress}>
+      <View style={styles.container}>
+        <ImageBackground source={image} style={styles.image}>
+          <LinearGradient
+            colors={["transparent", color]}
+            style={styles.gradient}
+          ></LinearGradient>
+          <View style={styles.row}>
+            {icon}
+            <Spacing />
+            <Heading text={title} level={3} color="white" />
+          </View>
+        </ImageBackground>
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -49,6 +59,10 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 150,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
 

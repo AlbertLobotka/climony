@@ -1,45 +1,27 @@
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import Heading from "../src/components/Heading";
-import Spacing from "../src/components/Spacing";
-import Card from "../src/components/Card";
+import Heading from "../components/Heading";
+import Spacing from "../components/Spacing";
+import useTopicsStore from "../stores/topic.store";
+import Card from "../components/Card";
+import { useEffect } from "react";
+import { TopicModel } from "../models/Topic.model";
+import { getIconByTopicId } from "../utils/topicIcon.util";
 
-const topics = [
-  {
-    image: require("../assets/topics/topic1.png"),
-    title: "Alltagsmobilität",
-    color: "#265D4D",
-  },
-  {
-    image: require("../assets/topics/topic2.png"),
-    title: "Lifestyle",
-    color: "#FFC84C",
-  },
-  {
-    image: require("../assets/topics/topic3.png"),
-    title: "Reisen",
-    color: "#73A7C0",
-  },
-  {
-    image: require("../assets/topics/topic4.png"),
-    title: "Wohnen",
-    color: "#FF712C",
-  },
-];
+export default function ExploreScreen() {
+  const topics = useTopicsStore((state) => state.data);
+  const getTopics = useTopicsStore((state) => state.actions.getData);
+  const router = useRouter();
 
-export default function Page() {
+  const handleGoToDetail = (topic: TopicModel) =>
+    router.push("/topics/" + topic.id);
+
+  useEffect(() => {
+    getTopics();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Tabs.Screen
-        options={{
-          title: "Verstehen",
-          headerShown: false,
-          tabBarIcon: () => (
-            <FontAwesome5 name="lightbulb" size={24} color="black" />
-          ),
-        }}
-      />
       <View style={styles.main}>
         <View style={styles.header}>
           <Heading text="Verstehen" level={1} />
@@ -59,10 +41,12 @@ export default function Page() {
               data={topics}
               renderItem={({ item }) => (
                 <Card
-                  key={item.title}
-                  image={item.image}
-                  title={item.title}
+                  onPress={() => handleGoToDetail(item)}
+                  key={item.id}
+                  image={{ uri: item.image }}
+                  title={item.name}
                   color={item.color}
+                  icon={getIconByTopicId(item.id)}
                 />
               )}
             />
@@ -76,7 +60,7 @@ export default function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9F4EF",
+    backgroundColor: "#f9f4ee",
   },
   main: {
     flex: 1,
@@ -100,7 +84,7 @@ const styles = StyleSheet.create({
   bodyInner: {
     padding: 24,
     borderTopRightRadius: 50,
-    backgroundColor: "#F9F4EF",
+    backgroundColor: "#f9f4ee",
     paddingTop: 38,
   },
 });
